@@ -48,10 +48,8 @@ public final class StudentAnalytics {
     public double averageAgeOfEnrolledStudentsParallelStream(final Student[] studentArray) {
         return Stream.of(studentArray).parallel().filter(
                 Student::checkIsCurrent
-        ).map(
-                Student::getAge
         ).mapToDouble(
-                Double::doubleValue
+                Student::getAge
         ).average().orElse(0D);
     }
 
