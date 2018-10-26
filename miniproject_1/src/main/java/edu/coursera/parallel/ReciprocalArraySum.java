@@ -1,10 +1,14 @@
 package edu.coursera.parallel;
 
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 /**
  * Class wrapping methods for implementing reciprocal array sum in parallel.
  */
+@SuppressWarnings("WeakerAccess")
 public final class ReciprocalArraySum {
 
     /**
@@ -19,12 +23,13 @@ public final class ReciprocalArraySum {
      * @param input Input array
      * @return The sum of the reciprocals of the array input
      */
+    @SuppressWarnings("unused")
     protected static double seqArraySum(final double[] input) {
         double sum = 0;
 
         // Compute sum of reciprocals of array elements
-        for (int i = 0; i < input.length; i++) {
-            sum += 1 / input[i];
+        for (double anInput : input) {
+            sum += 1 / anInput;
         }
 
         return sum;
@@ -53,8 +58,12 @@ public final class ReciprocalArraySum {
      * @return The inclusive index that this chunk starts at in the set of
      *         nElements
      */
-    private static int getChunkStartInclusive(final int chunk,
-            final int nChunks, final int nElements) {
+    @SuppressWarnings("unused")
+    private static int getChunkStartInclusive(
+            final int chunk,
+            final int nChunks,
+            final int nElements
+    ) {
         final int chunkSize = getChunkSize(nChunks, nElements);
         return chunk * chunkSize;
     }
@@ -68,8 +77,12 @@ public final class ReciprocalArraySum {
      * @param nElements The number of elements to chunk across
      * @return The exclusive end index for this chunk
      */
-    private static int getChunkEndExclusive(final int chunk, final int nChunks,
-            final int nElements) {
+    @SuppressWarnings("unused")
+    private static int getChunkEndExclusive(
+            final int chunk,
+            final int nChunks,
+            final int nElements
+    ) {
         final int chunkSize = getChunkSize(nChunks, nElements);
         final int end = (chunk + 1) * chunkSize;
         if (end > nElements) {
@@ -108,8 +121,11 @@ public final class ReciprocalArraySum {
          * @param setEndIndexExclusive Set ending index for parallel traversal.
          * @param setInput Input values
          */
-        ReciprocalArraySumTask(final int setStartIndexInclusive,
-                final int setEndIndexExclusive, final double[] setInput) {
+        ReciprocalArraySumTask(
+                final int setStartIndexInclusive,
+                final int setEndIndexExclusive,
+                final double[] setInput
+        ) {
             this.startIndexInclusive = setStartIndexInclusive;
             this.endIndexExclusive = setEndIndexExclusive;
             this.input = setInput;
@@ -125,12 +141,14 @@ public final class ReciprocalArraySum {
 
         @Override
         protected void compute() {
-            // TODO
+            for(int i = startIndexInclusive; i < endIndexExclusive; i++) {
+                value += 1 / input[i];
+            }
         }
     }
 
     /**
-     * TODO: Modify this method to compute the same reciprocal sum as
+     * This method computes the same reciprocal sum as
      * seqArraySum, but use two tasks running in parallel under the Java Fork
      * Join framework. You may assume that the length of the input array is
      * evenly divisible by 2.
@@ -139,20 +157,11 @@ public final class ReciprocalArraySum {
      * @return The sum of the reciprocals of the array input
      */
     protected static double parArraySum(final double[] input) {
-        assert input.length % 2 == 0;
-
-        double sum = 0;
-
-        // Compute sum of reciprocals of array elements
-        for (int i = 0; i < input.length; i++) {
-            sum += 1 / input[i];
-        }
-
-        return sum;
+        return parManyTaskArraySum(input, 2);
     }
 
     /**
-     * TODO: Extend the work you did to implement parArraySum to use a set
+     * Extend the work to implement parArraySum to use a set
      * number of tasks to compute the reciprocal array sum. You may find the
      * above utilities getChunkStartInclusive and getChunkEndExclusive helpful
      * in computing the range of element indices that belong to each chunk.
@@ -161,15 +170,23 @@ public final class ReciprocalArraySum {
      * @param numTasks The number of tasks to create
      * @return The sum of the reciprocals of the array input
      */
-    protected static double parManyTaskArraySum(final double[] input,
-            final int numTasks) {
-        double sum = 0;
+    protected static double parManyTaskArraySum(
+            final double[] input,
+            final int numTasks
+    ) {
 
-        // Compute sum of reciprocals of array elements
-        for (int i = 0; i < input.length; i++) {
-            sum += 1 / input[i];
+        ForkJoinPool pool = new ForkJoinPool(numTasks);
+        ReciprocalArraySumTask[] reciprocalArraySumTasks = new ReciprocalArraySumTask[numTasks];
+        for(int i = 0; i < numTasks; i++) {
+            pool.execute(
+                    reciprocalArraySumTasks[i] = new ReciprocalArraySumTask(
+                            i * (input.length) / numTasks,
+                            (i + 1) * (input.length) / numTasks,
+                            input
+                    )
+            );
         }
-
-        return sum;
+        pool.awaitQuiescence(5, TimeUnit.SECONDS);
+        return Stream.of(reciprocalArraySumTasks).mapToDouble(ReciprocalArraySumTask::getValue).sum();
     }
 }

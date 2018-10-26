@@ -48,8 +48,8 @@ public class ReciprocalArraySumTest extends TestCase {
         double sum = 0;
 
         // Compute sum of reciprocals of array elements
-        for (int i = 0; i < input.length; i++) {
-            sum += 1 / input[i];
+        for (double anInput : input) {
+            sum += 1 / anInput;
         }
 
         return sum;
@@ -97,7 +97,6 @@ public class ReciprocalArraySumTest extends TestCase {
             if (useManyTaskVersion) {
                 ReciprocalArraySum.parManyTaskArraySum(input, ntasks);
             } else {
-                assert ntasks == 2;
                 ReciprocalArraySum.parArraySum(input);
             }
         }
