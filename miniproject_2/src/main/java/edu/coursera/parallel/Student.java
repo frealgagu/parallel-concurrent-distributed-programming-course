@@ -3,6 +3,7 @@ package edu.coursera.parallel;
 /**
  * A class representing a single student in a single class.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Student {
     /**
      * First name of the student.

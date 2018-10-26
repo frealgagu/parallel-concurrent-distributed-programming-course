@@ -5,7 +5,8 @@ import java.util.Random;
 import junit.framework.TestCase;
 
 public class StudentAnalyticsTest extends TestCase {
-    final static int REPEATS = 10;
+
+    private final static int REPEATS = 10;
     private final static String[] firstNames = {"Sanjay", "Yunming", "John", "Vivek", "Shams", "Max"};
     private final static String[] lastNames = {"Chatterjee", "Zhang", "Smith", "Sarkar", "Imam", "Grossman"};
 
@@ -75,7 +76,6 @@ public class StudentAnalyticsTest extends TestCase {
      * Test performance of averageAgeOfEnrolledStudentsParallelStream.
      */
     public void testAverageAgeOfEnrolledStudentsPerf() {
-        final int ncores = getNCores();
         final double speedup = averageAgeOfEnrolledStudentsHelper(REPEATS);
         String msg = "Expected parallel version to run at least 1.2x faster but speedup was " + speedup;
         assertTrue(msg, speedup > 1.2);
@@ -159,7 +159,6 @@ public class StudentAnalyticsTest extends TestCase {
      * Test performance of countNumberOfFailedStudentsOlderThan20ParallelStream.
      */
     public void testCountNumberOfFailedStudentsOlderThan20Perf() {
-        final int ncores = getNCores();
         final double speedup = countNumberOfFailedStudentsOlderThan20Helper(REPEATS);
         String msg = "Expected parallel version to run at least 1.2x faster but speedup was " + speedup;
         assertTrue(msg, speedup > 1.2);
