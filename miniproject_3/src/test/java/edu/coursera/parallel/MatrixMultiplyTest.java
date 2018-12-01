@@ -52,7 +52,7 @@ public class MatrixMultiplyTest extends TestCase {
      * A reference implementation of seqMatrixMultiply, in case the one in the main source file is accidentally
      * modified.
      */
-    public void seqMatrixMultiply(final double[][] A, final double[][] B, final double[][] C, final int N) {
+    private void seqMatrixMultiply(final double[][] A, final double[][] B, final double[][] C, final int N) {
         for (int i = 0; i < N; i++) {
             for (int j = 0; j < N; j++) {
                 C[i][j] = 0.0;
