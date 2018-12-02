@@ -1,13 +1,12 @@
 package edu.coursera.parallel;
 
-import java.util.Random;
 import java.util.concurrent.Phaser;
 
 import junit.framework.TestCase;
 
 public class OneDimAveragingPhaserTest extends TestCase {
     // Number of times to repeat each test, for consistent timing results.
-    final static private int niterations = 12000;
+    private static final int ITERATIONS = 12000;
 
     private static int getNCores() {
         String ncoresStr = System.getenv("COURSERA_GRADER_NCORES");
@@ -31,7 +30,13 @@ public class OneDimAveragingPhaserTest extends TestCase {
     /**
      * A reference implementation of runSequential, in case the one in the main source file is accidentally modified.
      */
-    public void runSequential(final int iterations, double[] myNew, double[] myVal, final int n) {
+    @SuppressWarnings("unused")
+    public void runSequential(
+            final int iterations,
+            double[] myNew,
+            double[] myVal,
+            final int n
+    ) {
         for (int iter = 0; iter < iterations; iter++) {
             for (int j = 1; j <= n; j++) {
                 myNew[j] = (myVal[j - 1] + myVal[j + 1]) / 2.0;
@@ -42,8 +47,14 @@ public class OneDimAveragingPhaserTest extends TestCase {
         }
     }
 
-    private static void runParallelBarrier(final int iterations, final double[] myNew, final double[] myVal,
-            final int n, final int tasks) {
+    @SuppressWarnings("Duplicates")
+    private static void runParallelBarrier(
+            final int iterations,
+            final double[] myNew,
+            final double[] myVal,
+            final int n,
+            final int tasks
+    ) {
         Phaser ph = new Phaser(0);
         ph.bulkRegister(tasks);
 
@@ -99,7 +110,7 @@ public class OneDimAveragingPhaserTest extends TestCase {
      * @param N The size of the array to test
      * @return The speedup achieved, not all tests use this information
      */
-    private double parTestHelper(final int N, final int ntasks) {
+    private double parTestHelper(final int N, final int ntasks, int niterations) {
         // Create a random input
         double[] myNew = createArray(N, niterations);
         double[] myVal = createArray(N, niterations);
@@ -128,7 +139,7 @@ public class OneDimAveragingPhaserTest extends TestCase {
      */
     public void testFuzzyBarrier() {
         final double expected = 1.05;
-        final double speedup = parTestHelper(4 * 1024 * 1024, getNCores() * 16);
+        final double speedup = parTestHelper(4 * 1024 * 1024, getNCores() * 16, ITERATIONS);
         final String errMsg = String.format("It was expected that the fuzzy barrier parallel implementation would " +
                 "run %fx faster than the barrier implementation, but it only achieved %fx speedup", expected, speedup);
         assertTrue(errMsg, speedup >= expected);
