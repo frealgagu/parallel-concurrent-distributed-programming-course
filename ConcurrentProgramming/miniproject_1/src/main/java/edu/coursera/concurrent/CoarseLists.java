@@ -38,20 +38,16 @@ public final class CoarseLists {
             try {
                 reentrantLock.lock();
 
-                Entry pred = this.head;
-                Entry curr = pred.next;
-
-                while (curr.object.compareTo(object) < 0) {
-                    pred = curr;
-                    curr = pred.next;
+                Entry curr = this.head;
+                while (curr.next.object < object) {
+                    curr = curr.next;
                 }
-
-                if (object.equals(curr.object)) {
+                if (curr.next.object.intValue() == object) {
                     return false;
                 } else {
                     final Entry entry = new Entry(object);
-                    entry.next = curr;
-                    pred.next = entry;
+                    entry.next = curr.next;
+                    curr.next = entry;
                     return true;
                 }
             } finally {
@@ -67,16 +63,13 @@ public final class CoarseLists {
         boolean remove(final Integer object) {
             try {
                 reentrantLock.lock();
-                Entry pred = this.head;
-                Entry curr = pred.next;
 
-                while (curr.object.compareTo(object) < 0) {
-                    pred = curr;
-                    curr = pred.next;
+                Entry curr = this.head;
+                while (curr.next.object < object) {
+                    curr = curr.next;
                 }
-
-                if (object.equals(curr.object)) {
-                    pred.next = curr.next;
+                if (curr.next.object.intValue() == object) {
+                    curr.next = curr.next.next;
                     return true;
                 } else {
                     return false;
@@ -95,14 +88,11 @@ public final class CoarseLists {
             try {
                 reentrantLock.lock();
 
-                Entry pred = this.head;
-                Entry curr = pred.next;
-
-                while (curr.object.compareTo(object) < 0) {
-                    pred = curr;
-                    curr = pred.next;
+                Entry curr = this.head;
+                while (curr.next.object < object) {
+                    curr = curr.next;
                 }
-                return object.equals(curr.object);
+                return curr.next.object.intValue() == object;
             } finally {
                 reentrantLock.unlock();
             }
@@ -140,20 +130,16 @@ public final class CoarseLists {
             try {
                 reentrantReadWriteLock.writeLock().lock();
 
-                Entry pred = this.head;
-                Entry curr = pred.next;
-
-                while (curr.object.compareTo(object) < 0) {
-                    pred = curr;
-                    curr = pred.next;
+                Entry curr = this.head;
+                while (curr.next.object < object) {
+                    curr = curr.next;
                 }
-
-                if (object.equals(curr.object)) {
+                if (curr.next.object.intValue() == object) {
                     return false;
                 } else {
                     final Entry entry = new Entry(object);
-                    entry.next = curr;
-                    pred.next = entry;
+                    entry.next = curr.next;
+                    curr.next = entry;
                     return true;
                 }
             } finally {
@@ -170,16 +156,12 @@ public final class CoarseLists {
             try {
                 reentrantReadWriteLock.writeLock().lock();
 
-                Entry pred = this.head;
-                Entry curr = pred.next;
-
-                while (curr.object.compareTo(object) < 0) {
-                    pred = curr;
-                    curr = pred.next;
+                Entry curr = this.head;
+                while (curr.next.object < object) {
+                    curr = curr.next;
                 }
-
-                if (object.equals(curr.object)) {
-                    pred.next = curr.next;
+                if (curr.next.object.intValue() == object) {
+                    curr.next = curr.next.next;
                     return true;
                 } else {
                     return false;
@@ -198,14 +180,11 @@ public final class CoarseLists {
             try {
                 reentrantReadWriteLock.readLock().lock();
 
-                Entry pred = this.head;
-                Entry curr = pred.next;
-
-                while (curr.object.compareTo(object) < 0) {
-                    pred = curr;
-                    curr = pred.next;
+                Entry curr = this.head;
+                while (curr.next.object < object) {
+                    curr = curr.next;
                 }
-                return object.equals(curr.object);
+                return curr.next.object.intValue() == object;
             } finally {
                 reentrantReadWriteLock.readLock().unlock();
             }
