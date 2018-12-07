@@ -1,5 +1,7 @@
 package edu.coursera.concurrent;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -21,6 +23,7 @@ public final class CoarseLists {
     public static final class CoarseList extends ListSet {
 
         private final ReentrantLock reentrantLock = new ReentrantLock();
+        private final Set<Integer> coarseSet = new HashSet<>();
 
         /**
          * Default constructor.
@@ -37,6 +40,10 @@ public final class CoarseLists {
         boolean add(final Integer object) {
             try {
                 reentrantLock.lock();
+
+                if(!coarseSet.add(object)) {
+                    return false;
+                }
 
                 Entry curr = this.head;
                 while (curr.next.object < object) {
@@ -64,6 +71,10 @@ public final class CoarseLists {
             try {
                 reentrantLock.lock();
 
+                if(!coarseSet.remove(object)) {
+                    return false;
+                }
+
                 Entry curr = this.head;
                 while (curr.next.object < object) {
                     curr = curr.next;
@@ -87,12 +98,7 @@ public final class CoarseLists {
         boolean contains(final Integer object) {
             try {
                 reentrantLock.lock();
-
-                Entry curr = this.head;
-                while (curr.next.object < object) {
-                    curr = curr.next;
-                }
-                return curr.next.object.intValue() == object;
+                return coarseSet.contains(object);
             } finally {
                 reentrantLock.unlock();
             }
@@ -113,6 +119,7 @@ public final class CoarseLists {
     public static final class RWCoarseList extends ListSet {
 
         private final ReentrantReadWriteLock reentrantReadWriteLock = new ReentrantReadWriteLock();
+        private final Set<Integer> coarseSet = new HashSet<>();
 
         /**
          * Default constructor.
@@ -129,6 +136,10 @@ public final class CoarseLists {
         boolean add(final Integer object) {
             try {
                 reentrantReadWriteLock.writeLock().lock();
+
+                if(!coarseSet.add(object)) {
+                    return false;
+                }
 
                 Entry curr = this.head;
                 while (curr.next.object < object) {
@@ -155,6 +166,10 @@ public final class CoarseLists {
         boolean remove(final Integer object) {
             try {
                 reentrantReadWriteLock.writeLock().lock();
+
+                if(!coarseSet.remove(object)) {
+                    return false;
+                }
 
                 Entry curr = this.head;
                 while (curr.next.object < object) {
@@ -179,12 +194,7 @@ public final class CoarseLists {
         boolean contains(final Integer object) {
             try {
                 reentrantReadWriteLock.readLock().lock();
-
-                Entry curr = this.head;
-                while (curr.next.object < object) {
-                    curr = curr.next;
-                }
-                return curr.next.object.intValue() == object;
+                return coarseSet.contains(object);
             } finally {
                 reentrantReadWriteLock.readLock().unlock();
             }
