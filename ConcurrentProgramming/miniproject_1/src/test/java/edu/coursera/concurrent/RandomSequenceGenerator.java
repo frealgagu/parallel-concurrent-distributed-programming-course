@@ -2,6 +2,7 @@ package edu.coursera.concurrent;
 
 import java.util.Random;
 
+@SuppressWarnings("WeakerAccess")
 public class RandomSequenceGenerator implements SequenceGenerator {
     private final int seed;
     private Random rand;

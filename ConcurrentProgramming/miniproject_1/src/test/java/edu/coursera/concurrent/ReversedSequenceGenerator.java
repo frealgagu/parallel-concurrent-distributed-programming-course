@@ -1,6 +1,8 @@
 package edu.coursera.concurrent;
 
+@SuppressWarnings("WeakerAccess")
 public class ReversedSequenceGenerator implements SequenceGenerator {
+
     private final SequenceGenerator seq;
     private int[] buffered;
     private int iter;

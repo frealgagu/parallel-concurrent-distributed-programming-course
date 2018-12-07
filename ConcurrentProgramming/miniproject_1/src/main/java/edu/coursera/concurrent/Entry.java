@@ -3,6 +3,7 @@ package edu.coursera.concurrent;
 /**
  * A single element in any of the list implementations.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Entry {
     /**
      * The value stored in this list entry.

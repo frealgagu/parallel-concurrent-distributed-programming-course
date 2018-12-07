@@ -7,6 +7,7 @@ package edu.coursera.concurrent;
  * are required to maintain a sorted list of items internally with no
  * duplicates.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class ListSet {
     /**
      * Starting entry of this concurrent list.

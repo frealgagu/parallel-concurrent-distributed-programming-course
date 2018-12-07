@@ -1,6 +1,8 @@
 package edu.coursera.concurrent;
 
+@SuppressWarnings("WeakerAccess")
 public class RepeatingSequenceGenerator implements SequenceGenerator {
+
     private final int[] subsequence;
     private int iter;
     private final int sequenceLen;

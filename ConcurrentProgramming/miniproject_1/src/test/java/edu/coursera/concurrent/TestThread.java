@@ -1,11 +1,11 @@
 package edu.coursera.concurrent;
 
-import java.util.Random;
-
 /*
  * An abstract interface to be implemented by all testing threads.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class TestThread {
+
     // The ListSet to operate on
     protected ListSet l;
 
@@ -16,7 +16,7 @@ public abstract class TestThread {
             final ListSet setL) {
         this.nums = new Integer[seqToUse];
         for (int i = 0; i < this.nums.length; i++) {
-            this.nums[i] = new Integer(seq.next());
+            this.nums[i] = seq.next();
         }
         this.l = setL;
     }

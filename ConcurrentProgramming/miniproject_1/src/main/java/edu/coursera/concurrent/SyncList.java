@@ -7,6 +7,7 @@ package edu.coursera.concurrent;
  *  Thread safety is guaranteed by declaring each of the methods to be
  *  synchronized.
  */
+@SuppressWarnings("WeakerAccess")
 public final class SyncList extends ListSet {
     /**
      * Constructor.
@@ -24,8 +25,9 @@ public final class SyncList extends ListSet {
 
         while (curr.object.compareTo(object) < 0) {
             pred = curr;
-            curr = curr.next;
+            curr = pred.next;
         }
+
         return object.equals(curr.object);
     }
 
@@ -38,7 +40,7 @@ public final class SyncList extends ListSet {
 
         while (curr.object.compareTo(object) < 0) {
             pred = curr;
-            curr = curr.next;
+            curr = pred.next;
         }
 
         if (object.equals(curr.object)) {
@@ -60,7 +62,7 @@ public final class SyncList extends ListSet {
 
         while (curr.object.compareTo(object) < 0) {
             pred = curr;
-            curr = curr.next;
+            curr = pred.next;
         }
 
         if (object.equals(curr.object)) {

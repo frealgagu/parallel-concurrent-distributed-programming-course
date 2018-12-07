@@ -2,9 +2,6 @@ package edu.coursera.concurrent;
 
 import junit.framework.TestCase;
 
-import java.text.DecimalFormat;
-import java.util.Arrays;
-import java.util.Random;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.atomic.AtomicLong;
@@ -25,8 +22,12 @@ public class ListSetTest extends TestCase {
         }
     }
 
-    private static void printStats(TestResults ref, TestResults test,
-            final SequenceGenerator seq, final String datasetName) {
+    private static void printStats(
+            TestResults ref,
+            TestResults test,
+            final SequenceGenerator seq,
+            final String datasetName
+    ) {
         System.out.println("=========================================================");
         System.out.println(test.lbl + " vs. " + ref.lbl + " (" + datasetName + " " + seq.getLabel() + ")");
         System.out.println("=========================================================");
@@ -134,14 +135,17 @@ public class ListSetTest extends TestCase {
                 expectedContains, expectedRemove, "Small");
     }
 
-    private void testCoarseGrainedLockingHelper(final SequenceGenerator addSeq,
+    private void testCoarseGrainedLockingHelper(
+            final SequenceGenerator addSeq,
             final SequenceGenerator containsSeq,
-            final SequenceGenerator removeSeq, final double expectedAdd,
-            final double expectedContains, final double expectedRemove,
-            final String datasetName) throws InterruptedException {
-
-        final TestResultsPair results = runKernel(() -> new CoarseList(),
-                "CoarseList", () -> new SyncList(), "SyncList", addSeq,
+            final SequenceGenerator removeSeq,
+            final double expectedAdd,
+            final double expectedContains,
+            final double expectedRemove,
+            final String datasetName
+    ) throws InterruptedException {
+        final TestResultsPair results = runKernel(CoarseList::new,
+                "CoarseList", SyncList::new, "SyncList", addSeq,
                 containsSeq, removeSeq);
         final TestResults lockResults = results.A;
         final TestResults syncResults = results.B;
@@ -182,13 +186,15 @@ public class ListSetTest extends TestCase {
         assertTrue(removemsg, removeImprovement >= expectedRemove);
     }
 
-    public void testReadWriteLocksHelper(final SequenceGenerator addSeq,
+    private void testReadWriteLocksHelper(
+            final SequenceGenerator addSeq,
             final SequenceGenerator containsSeq,
             final SequenceGenerator removeSeq, final double expectedAdd,
             final double expectedContains, final double expectedRemove,
-            final String datasetName) throws InterruptedException {
-        final TestResultsPair results = runKernel(() -> new RWCoarseList(),
-                "RWCoarseList", () -> new SyncList(), "SyncList", addSeq,
+            final String datasetName
+    ) throws InterruptedException {
+        final TestResultsPair results = runKernel(RWCoarseList::new,
+                "RWCoarseList", SyncList::new, "SyncList", addSeq,
                 containsSeq, removeSeq);
         final TestResults rwResults = results.A;
         final TestResults syncResults = results.B;
@@ -229,10 +235,15 @@ public class ListSetTest extends TestCase {
         assertTrue(removemsg, removeImprovement >= expectedRemove);
     }
 
-    private static TestResultsPair runKernel(final ListFactory factoryA,
-            final String lblA, final ListFactory factoryB, final String lblB,
-            final SequenceGenerator addSeq, final SequenceGenerator containsSeq,
-            final SequenceGenerator removeSeq) throws InterruptedException {
+    private static TestResultsPair runKernel(
+            final ListFactory factoryA,
+            final String lblA,
+            final ListFactory factoryB,
+            final String lblB,
+            final SequenceGenerator addSeq,
+            final SequenceGenerator containsSeq,
+            final SequenceGenerator removeSeq
+    ) throws InterruptedException {
         final int numThreads = getNCores();
 
         /*
@@ -296,18 +307,21 @@ public class ListSetTest extends TestCase {
             threads[t].start();
         }
 
-        for (int i = 0; i < threads.length; i++) {
-            threads[i].join();
+        for (Thread thread : threads) {
+            thread.join();
         }
 
         return elapsedTime.get();
     }
 
-    private static TestResults mainKernel(final int numThreads,
-            final ListSet list, final String lbl,
-            final SequenceGenerator addSeq, final SequenceGenerator containsSeq,
-            final SequenceGenerator removeSeq) throws InterruptedException {
-
+    private static TestResults mainKernel(
+            final int numThreads,
+            final ListSet list,
+            final String lbl,
+            final SequenceGenerator addSeq,
+            final SequenceGenerator containsSeq,
+            final SequenceGenerator removeSeq
+    ) throws InterruptedException {
         AddTestThread[] addRunnables = new AddTestThread[numThreads];
         ContainsTestThread[] containsRunnables = new ContainsTestThread[numThreads];
         RemoveTestThread[] removeRunnables = new RemoveTestThread[numThreads];
@@ -329,11 +343,10 @@ public class ListSetTest extends TestCase {
         Entry prev = list.getHead();
         Entry curr = prev.next;
         while (curr != null) {
-            assertTrue("List was not sorted, index " +
-                    (listLengthAfterAdds - 1) + " is " +
-                    prev.object.intValue() + " and index " +
-                    listLengthAfterAdds + " is " + curr.object.intValue(),
-                    curr.object.intValue() > prev.object.intValue());
+            assertTrue(
+                    "List was not sorted, index " + (listLengthAfterAdds - 1) + " is " + prev.object + " and index " + listLengthAfterAdds + " is " + curr.object,
+                    curr.object > prev.object
+            );
 
             prev = curr;
             curr = curr.next;
@@ -375,7 +388,7 @@ public class ListSetTest extends TestCase {
         curr = prev.next;
         while (curr != null) {
             assertTrue("List was not sorted",
-                    curr.object.intValue() > prev.object.intValue());
+                    curr.object > prev.object);
 
             prev = curr;
             curr = curr.next;
@@ -410,32 +423,37 @@ public class ListSetTest extends TestCase {
     private static void tryGarbageCollection() {
         System.gc();
         for (int t = 0; t < 10_000; t++) {
+            //noinspection ResultOfMethodCallIgnored
             Math.random();
         }
     }
 
     private static class TestResults {
-        public final String lbl;
+        final String lbl;
 
-        public final double addRate;
-        public final double containsRate;
-        public final double removeRate;
+        final double addRate;
+        final double containsRate;
+        final double removeRate;
 
-        public final int listLengthAfterAdds;
-        public final int totalContainsSuccesses;
-        public final int totalContainsFailures;
-        public final int listLengthAfterRemoves;
-        public final int totalRemovesSuccesses;
-        public final int totalRemovesFailures;
+        final int listLengthAfterAdds;
+        final int totalContainsSuccesses;
+        final int totalContainsFailures;
+        final int listLengthAfterRemoves;
+        final int totalRemovesSuccesses;
+        final int totalRemovesFailures;
 
-        public TestResults(final String lbl,
-                final double addRate, final double containsRate,
-                final double removeRate, final int listLengthAfterAdds,
+        TestResults(
+                final String lbl,
+                final double addRate,
+                final double containsRate,
+                final double removeRate,
+                final int listLengthAfterAdds,
                 final int totalContainsSuccesses,
                 final int totalContainsFailures,
                 final int listLengthAfterRemoves,
                 final int totalRemovesSuccesses,
-                final int totalRemovesFailures) {
+                final int totalRemovesFailures
+        ) {
             this.lbl = lbl;
 
             this.addRate = addRate;
@@ -452,16 +470,16 @@ public class ListSetTest extends TestCase {
     }
 
     private static class TestResultsPair {
-        public final TestResults A;
-        public final TestResults B;
+        final TestResults A;
+        final TestResults B;
 
-        public TestResultsPair(final TestResults setA, final TestResults setB) {
+        TestResultsPair(final TestResults setA, final TestResults setB) {
             A = setA;
             B = setB;
         }
     }
 
     private interface ListFactory {
-        public ListSet construct();
+        ListSet construct();
     }
 }
