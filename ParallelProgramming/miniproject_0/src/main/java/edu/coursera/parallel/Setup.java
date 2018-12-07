@@ -6,7 +6,8 @@ import static edu.rice.pcdp.PCDP.async;
 /**
  * A simple class for testing compilation of an PCDP project.
  */
-final class Setup {
+@SuppressWarnings("WeakerAccess")
+public final class Setup {
 
     /**
      * Default constructor.
@@ -19,7 +20,7 @@ final class Setup {
      * @param val Input value
      * @return Dummy value
      */
-    static int setup(final int val) {
+    public static int setup(final int val) {
         final int[] result = new int[1];
         finish(() -> async(() -> result[0] = val));
         return result[0];
