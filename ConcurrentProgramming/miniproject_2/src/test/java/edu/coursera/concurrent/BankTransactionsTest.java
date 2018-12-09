@@ -98,9 +98,11 @@ public class BankTransactionsTest extends TestCase {
         } else {
             expected = 0.7 * ncores;
         }
-        final String msg = String.format("Expected an improvement of at " +
-                "least %fx with object-based isolation, but saw %fx", expected,
-                improvement);
+        final String msg = String.format(
+                "Expected an improvement of at " + "least %fx with object-based isolation, but saw %fx",
+                expected,
+                improvement
+        );
         assertTrue(msg, improvement >= expected);
     }
 }

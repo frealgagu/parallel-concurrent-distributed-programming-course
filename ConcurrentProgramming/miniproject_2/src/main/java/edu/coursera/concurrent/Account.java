@@ -4,6 +4,7 @@ package edu.coursera.concurrent;
  * Represents a single account in a bank whose only contents is the balance of
  * that account.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Account {
     /**
      * Unique ID number for this account.
@@ -74,12 +75,11 @@ public final class Account {
      * @param srcID The source account ID
      * @param destID The destination account ID
      */
+    @SuppressWarnings("StatementWithEmptyBody")
     private static void busyWork(final int srcID, final int destID) {
         for (int i = 0; i < srcID * 100; i++) {
-            ;
         }
         for (int i = 0; i < destID * 100; i++) {
-            ;
         }
     }
 
