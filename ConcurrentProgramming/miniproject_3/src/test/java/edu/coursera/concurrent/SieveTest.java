@@ -2,10 +2,9 @@ package edu.coursera.concurrent;
 
 import junit.framework.TestCase;
 
-import static edu.rice.pcdp.PCDP.finish;
-
 public class SieveTest extends TestCase {
-    static final double expectedScalability = 1.6;
+
+    private static final double expectedScalability = 1.6;
 
     private static int getNCores() {
         String ncoresStr = System.getenv("COURSERA_GRADER_NCORES");
@@ -32,6 +31,7 @@ public class SieveTest extends TestCase {
         return parElapsed;
     }
 
+    @SuppressWarnings("Duplicates")
     public void testActorSieveOneHundredThousand() throws InterruptedException {
         final int limit = 100_000;
         final int ref = new SieveSequential().countPrimes(limit);
@@ -53,7 +53,7 @@ public class SieveTest extends TestCase {
         }
     }
 
-
+    @SuppressWarnings("Duplicates")
     public void testActorSieveTwoHundredThousand() throws InterruptedException {
         final int limit = 200_000;
         final int ref = new SieveSequential().countPrimes(limit);
