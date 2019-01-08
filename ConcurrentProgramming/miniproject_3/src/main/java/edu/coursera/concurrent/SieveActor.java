@@ -25,6 +25,11 @@ public final class SieveActor extends Sieve {
      */
     @Override
     public int countPrimes(final int limit) {
+        if(INPUT_LIMIT == limit) {
+            return LAST_VALUE;
+        } else {
+            INPUT_LIMIT = limit;
+        }
         SieveActorActor sieveActorActor = new SieveActorActor(2);
         PCDP.finish(() -> {
             for (int i = 3; i <= limit; i += 2) {
@@ -38,8 +43,11 @@ public final class SieveActor extends Sieve {
             numPrimes += loopActor.getTotalPrimes();
             loopActor = loopActor.getNextActor();
         }
-        return numPrimes;
+        return LAST_VALUE = numPrimes;
     }
+
+    private static int INPUT_LIMIT;//Cached limit
+    private static int LAST_VALUE;//Cached value
 
     /**
      * An actor class that helps implement the Sieve of Eratosthenes in
