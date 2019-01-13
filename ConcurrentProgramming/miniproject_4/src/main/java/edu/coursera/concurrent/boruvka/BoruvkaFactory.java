@@ -8,6 +8,7 @@ package edu.coursera.concurrent.boruvka;
  * @param <E> Edge type to create.
  */
 public interface BoruvkaFactory<C extends Component, E extends Edge> {
+
     /**
      * Create a new component with the given ID.
      *

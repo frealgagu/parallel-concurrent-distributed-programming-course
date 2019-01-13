@@ -8,7 +8,9 @@ import edu.coursera.concurrent.boruvka.Component;
  *
  * @param <C> Type of component used in this run.
  */
+@SuppressWarnings("WeakerAccess")
 public final class SolutionToBoruvka<C extends Component> {
+
     /**
      * The final component the graph collapses down to.
      */

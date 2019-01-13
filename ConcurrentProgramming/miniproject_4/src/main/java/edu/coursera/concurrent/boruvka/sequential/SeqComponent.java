@@ -9,33 +9,38 @@ import java.util.List;
 /**
  * Component implementation used for the sequential Boruvka implementation.
  */
+@SuppressWarnings("WeakerAccess")
 public final class SeqComponent extends Component<SeqComponent> {
 
     /**
      *  A unique identifier for this component in the graph that contains
      *  it.
      */
-    public final int nodeId;
+    private final int nodeId;
+
     /**
      * List of edges attached to this component, sorted by weight from least
      * to greatest.
      */
-    public List<Edge<SeqComponent>> edges = new ArrayList<>();
+    private List<Edge<SeqComponent>> edges = new ArrayList<>();
+
     /**
      * The weight this component accounts for. A component gains weight when
      * it is merged with another component across an edge with a certain
      * weight.
      */
-    public double totalWeight = 0;
+    private double totalWeight = 0;
+
     /**
      * Number of edges that have been collapsed to create this component.
      */
-    public long totalEdges = 0;
+    private long totalEdges = 0;
+
     /**
      * Whether this component has already been collapsed into another
      * component.
      */
-    public boolean isDead = false;
+    private boolean isDead = false;
 
     /**
      * Constructor.
@@ -69,6 +74,14 @@ public final class SeqComponent extends Component<SeqComponent> {
     @Override
     public long totalEdges() {
         return totalEdges;
+    }
+
+    public boolean isDead() {
+        return isDead;
+    }
+
+    public void setDead(boolean dead) {
+        isDead = dead;
     }
 
     /**
@@ -159,12 +172,7 @@ public final class SeqComponent extends Component<SeqComponent> {
         }
 
         final Component component = (Component) o;
-
-        if (nodeId != component.nodeId()) {
-            return false;
-        }
-
-        return true;
+        return nodeId == component.nodeId();
     }
 
     /**

@@ -15,18 +15,20 @@ import java.util.Queue;
  *
  * @author <a href="http://shams.web.rice.edu/">Shams Imam</a> (shams@rice.edu)
  */
-public final class Loader {
+final class Loader {
+
     /**
      * Read edges from the provided input file.
      */
-    public static <C extends Component, E extends Edge> void read(final String fileName,
-            final BoruvkaFactory<C, E> boruvkaFactory, final Queue<C> nodesLoaded) {
+    static <C extends Component<C>, E extends Edge<C>> void read(
+            final String fileName,
+            final BoruvkaFactory<C, E> boruvkaFactory,
+            final Queue<C> nodesLoaded
+    ) {
 
         final Map<Integer, C> nodesMap = new HashMap<>();
         final Map<IntPair, E> edgesMap = new HashMap<>();
 
-        double totalWeight = 0;
-        int edges = 0;
         try {
             // Open the compressed file
             final GZIPInputStream in = new GZIPInputStream(new FileInputStream(fileName));
@@ -49,8 +51,6 @@ public final class Loader {
                 st.nextToken();
                 final int weight = (int) st.nval;
                 addEdge(boruvkaFactory, edgesMap, from, to, nodeFrom, nodeTo, weight);
-                totalWeight += weight;
-                edges++;
             }
             // Close the file and stream
             in.close();
@@ -64,17 +64,26 @@ public final class Loader {
         nodesLoaded.addAll(nodesList);
     }
 
-    private static <C extends Component, E extends Edge> C getComponent(final BoruvkaFactory<C, E> factory,
-            final Map<Integer, C> nodesMap, final int node) {
+    private static <C extends Component, E extends Edge> C getComponent(
+            final BoruvkaFactory<C, E> factory,
+            final Map<Integer, C> nodesMap,
+            final int node
+    ) {
         if (!nodesMap.containsKey(node)) {
             nodesMap.put(node, factory.newComponent(node));
         }
         return nodesMap.get(node);
     }
 
-    private static <C extends Component, E extends Edge> void addEdge(
-            final BoruvkaFactory<C, E> factory, final Map<IntPair, E> edgesMap,
-            final int from, final int to, final C fromC, final C toC, final double w) {
+    private static <C extends Component<C>, E extends Edge<C>> void addEdge(
+            final BoruvkaFactory<C, E> factory,
+            final Map<IntPair, E> edgesMap,
+            final int from,
+            final int to,
+            final C fromC,
+            final C toC,
+            final double w
+    ) {
 
         final IntPair p;
         if (from < to) {

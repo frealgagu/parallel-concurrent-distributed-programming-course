@@ -9,8 +9,8 @@ import edu.coursera.concurrent.ParBoruvka.ParEdge;
  * A factory for generating components and edges when performing a parallel
  * traversal.
  */
-public final class ParBoruvkaFactory
-        implements BoruvkaFactory<ParComponent, ParEdge> {
+public final class ParBoruvkaFactory implements BoruvkaFactory<ParComponent, ParEdge> {
+
     /**
      * {@inheritDoc}
      */
@@ -23,8 +23,11 @@ public final class ParBoruvkaFactory
      * {@inheritDoc}
      */
     @Override
-    public ParEdge newEdge(final ParComponent from, final ParComponent to,
-            final double weight) {
+    public ParEdge newEdge(
+            final ParComponent from,
+            final ParComponent to,
+            final double weight
+    ) {
         return new ParEdge(from, to, weight);
     }
 }

@@ -22,8 +22,10 @@ public final class SeqBoruvka extends AbstractBoruvka<SeqComponent> {
      * {@inheritDoc}
      */
     @Override
-    public void computeBoruvka(final Queue<SeqComponent> nodesLoaded,
-            final SolutionToBoruvka<SeqComponent> solution) {
+    public void computeBoruvka(
+            final Queue<SeqComponent> nodesLoaded,
+            final SolutionToBoruvka<SeqComponent> solution
+    ) {
         SeqComponent loopNode = null;
 
         // START OF EDGE CONTRACTION ALGORITHM
@@ -35,7 +37,7 @@ public final class SeqBoruvka extends AbstractBoruvka<SeqComponent> {
              */
             loopNode = nodesLoaded.poll();
 
-            if (loopNode.isDead) {
+            if (loopNode.isDead()) {
                 continue; // node loopNode has already been merged
             }
 
@@ -46,7 +48,7 @@ public final class SeqBoruvka extends AbstractBoruvka<SeqComponent> {
             }
 
             final SeqComponent other = e.getOther(loopNode);
-            other.isDead = true;
+            other.setDead(true);
             // merge node other into node loopNode
             loopNode.merge(other, e.weight());
             // add newly merged loopNode back in the work-list

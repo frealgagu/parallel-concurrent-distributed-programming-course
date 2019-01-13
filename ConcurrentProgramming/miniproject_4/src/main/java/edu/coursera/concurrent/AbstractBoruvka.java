@@ -11,6 +11,7 @@ import java.util.Queue;
  * @param <C> Type of component this Boruvka implementation operates on.
  */
 public abstract class AbstractBoruvka<C extends Component> {
+
     /**
      * Given a queue of nodes making up the initial graph, compute a minimal
      * spanning tree and return the result in the provided solution object.
@@ -35,6 +36,8 @@ public abstract class AbstractBoruvka<C extends Component> {
      *                 completion of your kernel, call setSolution on this
      *                 object to return your result to the testing code ***
      */
-    public abstract void computeBoruvka(final Queue<C> nodesLoaded,
-            final SolutionToBoruvka<C> solution);
+    public abstract void computeBoruvka(
+            final Queue<C> nodesLoaded,
+            final SolutionToBoruvka<C> solution
+    );
 }

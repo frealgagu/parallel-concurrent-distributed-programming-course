@@ -7,6 +7,7 @@ package edu.coursera.concurrent.boruvka;
  * @param <C> Type of this component.
  */
 public abstract class Component<C extends Component> {
+
     /**
      * Fetch the uniqe node ID for this node in the graph.
      *

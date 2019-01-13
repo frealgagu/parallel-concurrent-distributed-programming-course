@@ -5,21 +5,23 @@ import edu.coursera.concurrent.boruvka.Edge;
 /**
  * An edge class used in the sequential Boruvka implementation.
  */
-public final class SeqEdge extends Edge<SeqComponent>
-        implements Comparable<Edge> {
+@SuppressWarnings("WeakerAccess")
+public final class SeqEdge extends Edge<SeqComponent> implements Comparable<Edge> {
 
     /**
      * Source component.
      */
-    protected SeqComponent fromComponent;
+    private SeqComponent fromComponent;
+
     /**
      * Destination component.
      */
-    protected SeqComponent toComponent;
+    private SeqComponent toComponent;
+
     /**
      * Weight of this edge.
      */
-    public double weight;
+    private double weight;
 
     /**
      * Constructor.
@@ -28,8 +30,11 @@ public final class SeqEdge extends Edge<SeqComponent>
      * @param to To edges.
      * @param w Weight of this edge.
      */
-    protected SeqEdge(final SeqComponent from, final SeqComponent to,
-            final double w) {
+    protected SeqEdge(
+            final SeqComponent from,
+            final SeqComponent to,
+            final double w
+    ) {
         fromComponent = from;
         toComponent = to;
         weight = w;
@@ -69,10 +74,8 @@ public final class SeqEdge extends Edge<SeqComponent>
         }
 
         if (toComponent == from) {
-            assert (fromComponent != from);
             return fromComponent;
         }
-        assert (false);
         return null;
 
     }
@@ -82,20 +85,16 @@ public final class SeqEdge extends Edge<SeqComponent>
      */
     @Override
     public int compareTo(final Edge e) {
-        if (e.weight() == weight) {
-            return 0;
-        } else if (weight < e.weight()) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return Double.compare(weight, e.weight());
     }
 
     /**
      * {@inheritDoc}
      */
-    public SeqEdge replaceComponent(final SeqComponent from,
-            final SeqComponent to) {
+    public SeqEdge replaceComponent(
+            final SeqComponent from,
+            final SeqComponent to
+    ) {
         if (fromComponent == from) {
             fromComponent = to;
         }

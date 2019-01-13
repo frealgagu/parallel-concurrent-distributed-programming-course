@@ -7,6 +7,7 @@ package edu.coursera.concurrent.boruvka;
  * @param <C> Component type that this edge connects.
  */
 public abstract class Edge<C extends Component> {
+
     /**
      * Fetch the weight of this edge.
      *

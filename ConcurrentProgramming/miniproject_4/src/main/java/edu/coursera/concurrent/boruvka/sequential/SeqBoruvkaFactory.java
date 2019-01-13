@@ -6,8 +6,8 @@ import edu.coursera.concurrent.boruvka.BoruvkaFactory;
  * A factory for generating components and edges when performing a sequential
  * traversal.
  */
-public final class SeqBoruvkaFactory
-        implements BoruvkaFactory<SeqComponent, SeqEdge> {
+public final class SeqBoruvkaFactory implements BoruvkaFactory<SeqComponent, SeqEdge> {
+
     /**
      * {@inheritDoc}
      */
@@ -20,8 +20,11 @@ public final class SeqBoruvkaFactory
      * {@inheritDoc}
      */
     @Override
-    public SeqEdge newEdge(final SeqComponent from, final SeqComponent to,
-            final double weight) {
+    public SeqEdge newEdge(
+            final SeqComponent from,
+            final SeqComponent to,
+            final double weight
+    ) {
         return new SeqEdge(from, to, weight);
     }
 }

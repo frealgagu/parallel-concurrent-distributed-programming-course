@@ -3,11 +3,14 @@ package edu.coursera.concurrent.util;
 /**
  * A class to encapsulate a pair of integers, representing an edge in a graph.
  */
+@SuppressWarnings("WeakerAccess")
 public final class IntPair {
+
     /**
      * One item in the pair.
      */
     public final int left;
+
     /**
      * One item in the pair.
      */
