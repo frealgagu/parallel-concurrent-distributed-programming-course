@@ -8,6 +8,7 @@ import java.io.Serializable;
 /**
  * A single website in a graph of websites.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Website implements Serializable {
     /**
      * Unique ID for this website.
@@ -26,12 +27,13 @@ public final class Website implements Serializable {
      */
     public Website(final int setId) {
         this.id = setId;
-        this.edges = new LinkedList<Integer>();
+        this.edges = new LinkedList<>();
     }
 
     /**
      * Constructor, default initializes ID to -1.
      */
+    @SuppressWarnings("unused")
     public Website() {
         this(-1);
     }

@@ -15,13 +15,12 @@ import org.apache.log4j.Level;
 import junit.framework.TestCase;
 
 import org.apache.spark.SparkConf;
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 
 public class SparkTest extends TestCase {
 
-    private static enum EdgeDistribution {
+    private enum EdgeDistribution {
         INCREASING,
         RANDOM,
         UNIFORM
@@ -53,9 +52,13 @@ public class SparkTest extends TestCase {
         }
     }
 
-    private static Website generateWebsite(final int i, final int nNodes,
-            final int minEdgesPerNode, final int maxEdgesPerNode,
-            final EdgeDistribution edgeConfig) {
+    private static Website generateWebsite(
+            final int i,
+            final int nNodes,
+            final int minEdgesPerNode,
+            final int maxEdgesPerNode,
+            final EdgeDistribution edgeConfig
+    ) {
         Random r = new Random(i);
 
         Website site = new Website(i);
@@ -64,13 +67,11 @@ public class SparkTest extends TestCase {
         switch (edgeConfig) {
             case INCREASING:
                 double frac = (double)i / (double)nNodes;
-                double offset = (double)(maxEdgesPerNode - minEdgesPerNode)
-                    * frac;
+                double offset = (double)(maxEdgesPerNode - minEdgesPerNode) * frac;
                 nEdges = minEdgesPerNode + (int)offset;
                 break;
             case RANDOM:
-                nEdges = minEdgesPerNode +
-                    r.nextInt(maxEdgesPerNode - minEdgesPerNode);
+                nEdges = minEdgesPerNode + r.nextInt(maxEdgesPerNode - minEdgesPerNode);
                 break;
             case UNIFORM:
                 nEdges = maxEdgesPerNode;
@@ -87,40 +88,46 @@ public class SparkTest extends TestCase {
     }
 
     private static JavaPairRDD<Integer, Website> generateGraphRDD(
-            final int nNodes, final int minEdgesPerNode,
-            final int maxEdgesPerNode, final EdgeDistribution edgeConfig,
-            final JavaSparkContext context) {
-        List<Integer> nodes = new ArrayList<Integer>(nNodes);
+            final int nNodes,
+            final int minEdgesPerNode,
+            final int maxEdgesPerNode,
+            final EdgeDistribution edgeConfig,
+            final JavaSparkContext context
+    ) {
+        List<Integer> nodes = new ArrayList<>(nNodes);
         for (int i = 0; i < nNodes; i++) {
             nodes.add(i);
         }
 
-        return context.parallelize(nodes).mapToPair(i -> {
-            return new Tuple2(i, generateWebsite(i, nNodes, minEdgesPerNode,
-                    maxEdgesPerNode, edgeConfig));
-        });
+        return context.parallelize(nodes).mapToPair(
+                i -> new Tuple2<>(i, generateWebsite(i, nNodes, minEdgesPerNode, maxEdgesPerNode, edgeConfig))
+        );
     }
 
     private static JavaPairRDD<Integer, Double> generateRankRDD(
-            final int nNodes, final JavaSparkContext context) {
-        List<Integer> nodes = new ArrayList<Integer>(nNodes);
+            final int nNodes,
+            final JavaSparkContext context
+    ) {
+        List<Integer> nodes = new ArrayList<>(nNodes);
         for (int i = 0; i < nNodes; i++) {
             nodes.add(i);
         }
 
         return context.parallelize(nodes).mapToPair(i -> {
             Random rand = new Random(i);
-            return new Tuple2(i, 100.0 * rand.nextDouble());
+            return new Tuple2<>(i, 100.0 * rand.nextDouble());
         });
     }
 
-    private static Website[] generateGraphArr(final int nNodes,
-            final int minEdgesPerNode, final int maxEdgesPerNode,
-            final EdgeDistribution edgeConfig) {
+    private static Website[] generateGraphArr(
+            final int nNodes,
+            final int minEdgesPerNode,
+            final int maxEdgesPerNode,
+            final EdgeDistribution edgeConfig
+    ) {
         Website[] sites = new Website[nNodes];
         for (int i = 0; i < sites.length; i++) {
-            sites[i] = generateWebsite(i, nNodes, minEdgesPerNode,
-                    maxEdgesPerNode, edgeConfig);
+            sites[i] = generateWebsite(i, nNodes, minEdgesPerNode, maxEdgesPerNode, edgeConfig);
         }
         return sites;
     }
@@ -152,16 +159,18 @@ public class SparkTest extends TestCase {
         return newRanks;
     }
 
-    private static void testDriver(final int nNodes, final int minEdgesPerNode,
-            final int maxEdgesPerNode, final int niterations,
-            final EdgeDistribution edgeConfig) {
-        System.err.println("Running the PageRank algorithm for " + niterations +
-                " iterations on a website graph of " + nNodes + " websites");
+    private static void testDriver(
+            final int nNodes,
+            final int minEdgesPerNode,
+            final int maxEdgesPerNode,
+            final int niterations,
+            final EdgeDistribution edgeConfig
+    ) {
+        System.err.println("Running the PageRank algorithm for " + niterations + " iterations on a website graph of " + nNodes + " websites");
         System.err.println();
 
         final int repeats = 2;
-        Website[] nodesArr = generateGraphArr(nNodes, minEdgesPerNode,
-                maxEdgesPerNode, edgeConfig);
+        Website[] nodesArr = generateGraphArr(nNodes, minEdgesPerNode, maxEdgesPerNode, edgeConfig);
         double[] ranksArr = generateRankArr(nNodes);
         for (int i = 0; i < niterations; i++) {
             ranksArr = seqPageRank(nodesArr, ranksArr);
@@ -169,17 +178,16 @@ public class SparkTest extends TestCase {
 
         JavaSparkContext context = getSparkContext(1);
 
-        JavaPairRDD<Integer, Website> nodes = null;
-        JavaPairRDD<Integer, Double> ranks = null;
+        JavaPairRDD<Integer, Website> nodes;
+        JavaPairRDD<Integer, Double> ranks;
         final long singleStart = System.currentTimeMillis();
         for (int r = 0; r < repeats; r++) {
-            nodes = generateGraphRDD(nNodes, minEdgesPerNode,
-                    maxEdgesPerNode, edgeConfig, context);
+            nodes = generateGraphRDD(nNodes, minEdgesPerNode, maxEdgesPerNode, edgeConfig, context);
             ranks = generateRankRDD(nNodes, context);
             for (int i = 0; i < niterations; i++) {
                 ranks = PageRank.sparkPageRank(nodes, ranks);
             }
-            List<Tuple2<Integer, Double>> parResult = ranks.collect();
+            ranks.collect();
         }
         final long singleElapsed = System.currentTimeMillis() - singleStart;
         context.stop();
@@ -189,8 +197,7 @@ public class SparkTest extends TestCase {
         List<Tuple2<Integer, Double>> parResult = null;
         final long parStart = System.currentTimeMillis();
         for (int r = 0; r < repeats; r++) {
-            nodes = generateGraphRDD(nNodes, minEdgesPerNode,
-                    maxEdgesPerNode, edgeConfig, context);
+            nodes = generateGraphRDD(nNodes, minEdgesPerNode, maxEdgesPerNode, edgeConfig, context);
             ranks = generateRankRDD(nNodes, context);
             for (int i = 0; i < niterations; i++) {
                 ranks = PageRank.sparkPageRank(nodes, ranks);
@@ -201,7 +208,7 @@ public class SparkTest extends TestCase {
         final double speedup = (double)singleElapsed / (double)parElapsed;
         context.stop();
 
-        Map<Integer, Double> keyed = new HashMap<Integer, Double>();
+        Map<Integer, Double> keyed = new HashMap<>();
         for (Tuple2<Integer, Double> site : parResult) {
             assert (!keyed.containsKey(site._1()));
             keyed.put(site._1(), site._2());
@@ -210,22 +217,17 @@ public class SparkTest extends TestCase {
         assertEquals(nodesArr.length, parResult.size());
         for (int i = 0; i < parResult.size(); i++) {
             assertTrue(keyed.containsKey(nodesArr[i].getId()));
-            final double delta = Math.abs(ranksArr[i] -
-                    keyed.get(nodesArr[i].getId()));
+            final double delta = Math.abs(ranksArr[i] - keyed.get(nodesArr[i].getId()));
             assertTrue(delta < 1E-9);
         }
 
         System.err.println();
-        System.err.println("Single-core execution ran in " + singleElapsed +
-                " ms");
-        System.err.println(getNCores() + "-core execution ran in " +
-                parElapsed + " ms, yielding a speedup of " + speedup + "x");
+        System.err.println("Single-core execution ran in " + singleElapsed + " ms");
+        System.err.println(getNCores() + "-core execution ran in " + parElapsed + " ms, yielding a speedup of " + speedup + "x");
         System.err.println();
 
         final double expectedSpeedup = 1.35;
-        final String msg = "Expected at least " + expectedSpeedup +
-            "x speedup, but only saw " + speedup + "x. Sequential time = " +
-            singleElapsed + " ms, parallel time = " + parElapsed + " ms";
+        final String msg = "Expected at least " + expectedSpeedup + "x speedup, but only saw " + speedup + "x. Sequential time = " + singleElapsed + " ms, parallel time = " + parElapsed + " ms";
         assertTrue(msg, speedup >= expectedSpeedup);
     }
 
@@ -236,8 +238,7 @@ public class SparkTest extends TestCase {
         final int niterations = 5;
         final EdgeDistribution edgeConfig = EdgeDistribution.UNIFORM;
 
-        testDriver(nNodes, minEdgesPerNode, maxEdgesPerNode, niterations,
-                edgeConfig);
+        testDriver(nNodes, minEdgesPerNode, maxEdgesPerNode, niterations, edgeConfig);
     }
 
     public void testUniformFiftyThousand() {
