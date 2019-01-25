@@ -1,7 +1,5 @@
 package edu.coursera.distributed;
 
-import java.util.Random;
-
 import junit.framework.TestCase;
 
 public class SetupTest extends TestCase {

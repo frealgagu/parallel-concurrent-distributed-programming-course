@@ -3,6 +3,7 @@ package edu.coursera.distributed;
 /**
  * A simple class for testing compilation of a Java project.
  */
+@SuppressWarnings("WeakerAccess")
 public final class Setup {
 
     /**
