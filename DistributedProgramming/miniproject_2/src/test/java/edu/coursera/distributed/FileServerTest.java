@@ -2,18 +2,14 @@ package edu.coursera.distributed;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.DataOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.File;
-import java.io.PrintWriter;
 
 import java.net.ServerSocket;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
-import java.net.ConnectException;
 import java.nio.channels.ClosedByInterruptException;
 
 import java.util.Map;
@@ -24,13 +20,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("WeakerAccess")
 public class FileServerTest extends TestCase {
+
     private int port;
     private static final String rootDirName = "static";
-    private static final File rootDir = new File(rootDirName);
     private static final Random rand = new Random();
 
-    private static final Map<String, String> files = new HashMap<String, String>();
+    private static final Map<String, String> files = new HashMap<>();
 
     private static String getRandomFileContents(final int len) {
         StringBuilder sb = new StringBuilder();
@@ -40,10 +37,14 @@ public class FileServerTest extends TestCase {
         return sb.toString();
     }
 
+    @SuppressWarnings("unused")
     private static void deleteRecursively(File f) throws IOException {
         if (f.isDirectory()) {
-            for (File c : f.listFiles()) {
-                deleteRecursively(c);
+            File[] files = f.listFiles();
+            if(files != null) {
+                for (File c : files) {
+                    deleteRecursively(c);
+                }
             }
         }
 
@@ -82,19 +83,14 @@ public class FileServerTest extends TestCase {
         socket.setReuseAddress(true);
         final PCDPFilesystem fs = getFilesystem();
         
-        Runnable runner = new Runnable () {
-            @Override
-            public void run() {
-                try {
-                    FileServer server = new FileServer();
-                    server.run(socket, fs);
-                } catch (SocketException s) {
-                    // Do nothing, assume killed by main thread
-                } catch (ClosedByInterruptException s) {
-                    // Do nothing, assume killed by main thread
-                } catch (IOException io) {
-                    throw new RuntimeException(io);
-                }
+        Runnable runner = () -> {
+            try {
+                FileServer server = new FileServer();
+                server.run(socket, fs);
+            } catch (SocketException | ClosedByInterruptException s) {
+                // Do nothing, assume killed by main thread
+            } catch (IOException io) {
+                throw new RuntimeException(io);
             }
         };
 
@@ -127,7 +123,7 @@ public class FileServerTest extends TestCase {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
             String inputLine;
-            StringBuffer response = new StringBuffer();
+            StringBuilder response = new StringBuilder();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }

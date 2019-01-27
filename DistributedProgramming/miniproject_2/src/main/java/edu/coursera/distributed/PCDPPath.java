@@ -4,7 +4,9 @@ package edu.coursera.distributed;
  * Class for storing the absolute path to a file as separate path
  * components.
  */
+@SuppressWarnings("WeakerAccess")
 public final class PCDPPath {
+
     /**
      * PCDPPath components.
      */
@@ -19,8 +21,7 @@ public final class PCDPPath {
      */
     public PCDPPath(final String path) {
         if (!path.startsWith("/")) {
-            throw new RuntimeException("Only absolute paths supported, " +
-                    "received path \"" + path + "\"");
+            throw new RuntimeException("Only absolute paths supported, " + "received path \"" + path + "\"");
         }
 
         components = path.substring(1).split("/");

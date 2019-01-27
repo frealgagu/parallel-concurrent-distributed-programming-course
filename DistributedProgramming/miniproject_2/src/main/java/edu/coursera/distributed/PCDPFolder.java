@@ -6,7 +6,9 @@ import java.util.HashMap;
 /**
  * Representation of a folder node in the virtual filesystem.
  */
+@SuppressWarnings("WeakerAccess")
 public final class PCDPFolder extends PCDPFilesystemComponent {
+
     /**
      * Child components of this folder (may be folders and/or files).
      */
@@ -19,7 +21,7 @@ public final class PCDPFolder extends PCDPFilesystemComponent {
      */
     public PCDPFolder(final String setName) {
         super(setName);
-        children = new HashMap<String, PCDPFilesystemComponent>();
+        children = new HashMap<>();
     }
 
     /**
