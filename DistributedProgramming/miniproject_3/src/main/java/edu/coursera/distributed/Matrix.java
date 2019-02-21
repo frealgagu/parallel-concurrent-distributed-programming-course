@@ -3,7 +3,9 @@ package edu.coursera.distributed;
 /**
  * Represents a single two-dimensional matrix.
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class Matrix {
+
     /**
      * The values of the matrix, flattened and stored in row-major order.
      */

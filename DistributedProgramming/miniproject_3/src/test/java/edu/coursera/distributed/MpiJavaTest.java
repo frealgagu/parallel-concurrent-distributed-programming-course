@@ -60,7 +60,7 @@ public class MpiJavaTest extends TestCase {
     private static MPI mpi = null;
 
     public static Test suite() {
-        TestSetup setup = new TestSetup(new TestSuite(MpiJavaTest.class)) {
+        return new TestSetup(new TestSuite(MpiJavaTest.class)) {
             protected void setUp() throws Exception {
                 assert (mpi == null);
                 mpi = new MPI();
@@ -72,7 +72,6 @@ public class MpiJavaTest extends TestCase {
                 mpi.MPI_Finalize();
             }
         };
-        return setup;
     }
 
     private void testDriver(final int M, final int N, final int P)

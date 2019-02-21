@@ -3,7 +3,6 @@ package edu.coursera.distributed.util;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
-import com.sun.jna.Platform;
 import com.sun.jna.Pointer;
 import com.sun.jna.Memory;
 
@@ -15,6 +14,7 @@ import java.nio.DoubleBuffer;
  * documentation of the wrapped MPI APIs, refer to
  * https://www.open-mpi.org/doc/v1.8/
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public final class MPI {
     private interface MPILib extends Library {
         MPILib INSTANCE = (MPILib)Native.loadLibrary("mpi", MPILib.class);
@@ -331,8 +331,8 @@ public final class MPI {
      * @throws MPIException On MPI error
      */
     public void MPI_Waitall(final MPI_Request[] requests) throws MPIException {
-        for (int i = 0; i < requests.length; i++) {
-            MPI_Wait(requests[i]);
+        for (MPI_Request request : requests) {
+            MPI_Wait(request);
         }
     }
 
