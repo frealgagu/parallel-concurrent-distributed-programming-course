@@ -8,6 +8,7 @@ package edu.coursera.distributed;
  */
 @SuppressWarnings("WeakerAccess")
 public class PCDPFilesystem {
+
     /**
      * The root folder for the virtual filesystem.
      */
@@ -62,7 +63,6 @@ public class PCDPFilesystem {
      * @return The contents of the specified file, or null if the file does not
      *         seem to exist.
      */
-    @SuppressWarnings("unused")
     public String readFile(PCDPPath path) {
         if (path.getNComponents() == 0) {
             return null;

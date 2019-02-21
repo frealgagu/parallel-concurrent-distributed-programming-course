@@ -4,7 +4,9 @@ package edu.coursera.distributed;
  * Represents an object in the simulated filesystem, either a file or
  * folder.
  */
+@SuppressWarnings("WeakerAccess")
 public abstract class PCDPFilesystemComponent {
+
     /**
      * Name of this object (note this is not the path, but only this
      * object's name).

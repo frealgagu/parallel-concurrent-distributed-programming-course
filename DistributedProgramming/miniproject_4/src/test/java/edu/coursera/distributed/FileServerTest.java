@@ -2,35 +2,33 @@ package edu.coursera.distributed;
 
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.DataOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.io.File;
-import java.io.PrintWriter;
 
 import java.net.ServerSocket;
 import java.net.URL;
 import java.net.HttpURLConnection;
 import java.net.SocketException;
-import java.net.ConnectException;
 import java.nio.channels.ClosedByInterruptException;
 
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Random;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 import junit.framework.TestCase;
 
+@SuppressWarnings("WeakerAccess")
 public class FileServerTest extends TestCase {
+
     private int port;
     private static final String rootDirName = "static";
-    private static final File rootDir = new File(rootDirName);
     private static final Random rand = new Random();
 
-    private static final Map<String, String> files = new HashMap<String, String>();
+    private static final Map<String, String> files = new HashMap<>();
 
     private static int getNCores() {
         String ncoresStr = System.getenv("COURSERA_GRADER_NCORES");
@@ -53,9 +51,10 @@ public class FileServerTest extends TestCase {
         return sb.toString();
     }
 
+    @SuppressWarnings("unused")
     private static void deleteRecursively(File f) throws IOException {
         if (f.isDirectory()) {
-            for (File c : f.listFiles()) {
+            for (File c : Optional.ofNullable(f.listFiles()).orElseGet(() -> new File[]{})) {
                 deleteRecursively(c);
             }
         }
@@ -96,19 +95,14 @@ public class FileServerTest extends TestCase {
         socket.setReuseAddress(true);
         final PCDPFilesystem fs = getFilesystem();
         
-        Runnable runner = new Runnable () {
-            @Override
-            public void run() {
-                try {
-                    FileServer server = new FileServer();
-                    server.run(socket, fs, getNCores());
-                } catch (SocketException s) {
-                    // Do nothing, assume killed by main thread
-                } catch (ClosedByInterruptException s) {
-                    // Do nothing, assume killed by main thread
-                } catch (IOException io) {
-                    throw new RuntimeException(io);
-                }
+        Runnable runner = () -> {
+            try {
+                FileServer server = new FileServer();
+                server.run(socket, fs, getNCores());
+            } catch (SocketException | ClosedByInterruptException s) {
+                // Do nothing, assume killed by main thread
+            } catch (IOException io) {
+                throw new RuntimeException(io);
             }
         };
 
@@ -119,8 +113,7 @@ public class FileServerTest extends TestCase {
         return new HttpServer(thread, socket);
     }
 
-    private HttpResponse sendHttpRequest(final String path, final boolean print)
-            throws IOException {
+    private HttpResponse sendHttpRequest(final String path, final boolean print) throws IOException {
         assert !path.startsWith("/");
 
         if (print) {
@@ -141,7 +134,7 @@ public class FileServerTest extends TestCase {
             BufferedReader in = new BufferedReader(
                     new InputStreamReader(con.getInputStream()));
             String inputLine;
-            StringBuffer response = new StringBuffer();
+            StringBuilder response = new StringBuilder();
             while ((inputLine = in.readLine()) != null) {
                 response.append(inputLine);
             }
@@ -276,8 +269,8 @@ public class FileServerTest extends TestCase {
             driverThreads[i] = new Thread(drivers[i]);
         }
 
-        for (int i = 0; i < driverThreads.length; i++) {
-            driverThreads[i].start();
+        for (Thread driverThread : driverThreads) {
+            driverThread.start();
         }
 
         Thread.sleep(10000);
@@ -287,8 +280,8 @@ public class FileServerTest extends TestCase {
         server.thread.join();
 
         int completedRequests = 0;
-        for (int i = 0; i < drivers.length; i++) {
-            completedRequests += drivers[i].getNRequests();
+        for (RequestDriver driver : drivers) {
+            completedRequests += driver.getNRequests();
         }
         return completedRequests;
     }
@@ -348,8 +341,8 @@ public class FileServerTest extends TestCase {
     }
 
     class RequestDriver implements Runnable {
-        private final Map<String, String> requests =
-            new HashMap<String, String>();
+
+        private final Map<String, String> requests = new HashMap<>();
         private int nRequests = 0;
 
         public void addRequest(final String filename, final String body) {
@@ -363,7 +356,7 @@ public class FileServerTest extends TestCase {
         @Override
         public void run() {
             try {
-                while (true) {
+                while (requests.size() >= 0) {
                     for (Map.Entry<String, String> r : requests.entrySet()) {
                         HttpResponse response = sendHttpRequest(r.getKey(),
                                 false);
@@ -372,8 +365,6 @@ public class FileServerTest extends TestCase {
 
                     nRequests++;
                 }
-            } catch (ConnectException c) {
-                // Is fine, server shut down
             } catch (SocketException s) {
                 // Is fine, server shut down
             } catch (IOException io) {

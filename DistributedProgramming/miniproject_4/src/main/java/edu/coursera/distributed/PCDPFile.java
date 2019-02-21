@@ -3,7 +3,9 @@ package edu.coursera.distributed;
 /**
  * Representation of a file node in the virtual filesystem.
  */
+@SuppressWarnings("WeakerAccess")
 public final class PCDPFile extends PCDPFilesystemComponent {
+
     /**
      * Contents of the represented file.
      */

@@ -1,16 +1,14 @@
 package edu.coursera.distributed;
 
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Iterator;
-
 /**
  * A class to represent a virtual, in-memory filesystem. PCDPFilesystem exposes
  * two user-visible APIs: one for adding a file to a given virtual filesystem
  * (addFile) and one for reading the contents of a file that already exists
  * (readFile).
  */
+@SuppressWarnings("WeakerAccess")
 public class PCDPFilesystem {
+
     /**
      * The root folder for the virtual filesystem.
      */
@@ -82,11 +80,7 @@ public class PCDPFilesystem {
             if (curr == null || !(curr instanceof PCDPFolder)) {
                 return null;
             }
-
-            PCDPFilesystemComponent next = ((PCDPFolder)curr).getChild(
-                    nextComponent);
-
-            curr = next;
+            curr = ((PCDPFolder)curr).getChild(nextComponent);
         }
 
         if (curr == null || !(curr instanceof PCDPFile)) {
